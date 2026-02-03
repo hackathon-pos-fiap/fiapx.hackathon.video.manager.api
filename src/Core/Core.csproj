@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\Enums\" />
+    <Folder Include="Entities\Exceptions\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Gateways\Interfaces\" />
+    <Folder Include="UseCases\Interfaces\" />
+  </ItemGroup>
+
+</Project>
