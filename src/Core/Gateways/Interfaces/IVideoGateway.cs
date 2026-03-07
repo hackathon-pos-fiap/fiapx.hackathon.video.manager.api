@@ -1,9 +1,9 @@
 ﻿using Core.Entities;
 using Core.Entities.Enums;
 
-namespace Core.UseCases.Interfaces
+namespace Core.Gateways.Interfaces
 {
-    public interface IVideoUseCase
+    public interface IVideoGateway
     {
         Task<IEnumerable<Video>> GetAllAsync(VideoStatus? status, int skip, int limit, CancellationToken cancellationToken);
         Task<Video> GetByIdAsync(string id, CancellationToken cancellationToken);

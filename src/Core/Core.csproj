@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Entities\Exceptions\" />
     <Folder Include="Exceptions\" />
-    <Folder Include="Gateways\Interfaces\" />
   </ItemGroup>
 
 </Project>

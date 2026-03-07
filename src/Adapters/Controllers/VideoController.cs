@@ -1,5 +1,6 @@
 ﻿using Adapters.Controllers.Interfaces;
 using Adapters.Presenters;
+using Core.Entities;
 using Core.Entities.Enums;
 using Core.UseCases.Interfaces;
 
@@ -16,19 +17,19 @@ namespace Adapters.Controllers
 
         public async Task<IEnumerable<VideoResponse>> GetAllAsync(VideoFilter filter, CancellationToken cancellationToken)
         {
-            IEnumerable<VideoResponse> videos = await _videoUseCase.GetAllAsync(filter.Status, filter.Skip, filter.Limit, cancellationToken);
+            IEnumerable<Video> videos = await _videoUseCase.GetAllAsync(filter.Status, filter.Skip, filter.Limit, cancellationToken);
 
             return videos.Select(video => new VideoResponse(video.Id, video.FileName, video.UploadUrl, video.Status));
         }
 
-        public Task<VideoResponse> GetByIdAsync(string id, CancellationToken cancellationToken)
+        public async Task<VideoResponse> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
                 throw new ArgumentNullException(nameof(id));
             }
 
-            var video = _videoUseCase.GetByIdAsync(id, cancellationToken);
+            var video = await _videoUseCase.GetByIdAsync(id, cancellationToken);
 
             if (video is null)
             {
