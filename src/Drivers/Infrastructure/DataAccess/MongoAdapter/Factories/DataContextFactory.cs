@@ -15,7 +15,7 @@ namespace Infrastructure.DataAccess.MongoAdapter.Factories
 
             var mongoConnection = mongoConnections.Where(w => w.ClusterName == "default").FirstOrDefault();
 
-            var mongoDatabase = mongoConnection!.Client.GetDatabase("fiapx_hackathon");
+            var mongoDatabase = mongoConnection!.Client.GetDatabase("fiap_hackathon");
 
             return new MongoContext("default", mongoDatabase);
         }

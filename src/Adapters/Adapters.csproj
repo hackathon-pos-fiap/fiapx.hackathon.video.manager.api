@@ -11,7 +11,10 @@
     <Folder Include="Gateways\MongoDbs\Converters\" />
     <Folder Include="Gateways\MongoDbs\Entities\" />
     <Folder Include="Gateways\MongoDbs\Interfaces\" />
-    <Folder Include="Presenters\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
 </Project>
