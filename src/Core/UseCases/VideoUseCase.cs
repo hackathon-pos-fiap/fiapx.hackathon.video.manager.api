@@ -26,6 +26,8 @@ namespace Core.UseCases
 
         public async Task<Video> RequestUploadAsync(string fileName, CancellationToken cancellationToken)
         {
+            // TODO: handle bucket gateway
+            // TODO: change name of video gateway method to InsertOneAsync
             return await _videoGateway.RequestUploadAsync(fileName, cancellationToken);
         }
 

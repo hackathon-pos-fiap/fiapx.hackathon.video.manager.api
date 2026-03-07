@@ -1,0 +1,153 @@
+name: Pipeline workflow_dispatch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sonarqube-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Install DotNet Coverage
+        run: dotnet tool install --global dotnet-coverage
+
+      - name: SonarCloud - Begin
+        run: |
+          dotnet-sonarscanner begin \
+          /k:"hackathon-pos-fiap_fiapx.hackathon.video.manager.api" \
+          /o:"hackathon-pos-fiap" \
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml \
+          /d:sonar.exclusions="**/Api/**,**/Infrastructure/**,tests/**" \
+          /d:sonar.inclusions="**/*.cs" 
+
+      - name: Build
+        run: dotnet build --configuration Release --no-incremental
+
+      - name: DotNet Coverage Collect
+        run: dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+
+      - name: SonarCloud - End
+        run: |
+          dotnet-sonarscanner end \
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+      - name: SonarCloud - Quality Gate (API)
+        run: |
+          REPORT_FILE=".sonarqube/out/.sonar/report-task.txt"
+
+          if [ ! -f "$REPORT_FILE" ]; then
+          echo "report-task.txt not found"
+          exit 1
+          fi
+
+          CE_TASK_ID=$(grep ceTaskId "$REPORT_FILE" | cut -d'=' -f2)
+          SERVER_URL=$(grep serverUrl "$REPORT_FILE" | cut -d'=' -f2)
+
+          echo "Waiting SonarCloud..."
+
+          while true; do
+          CE_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+              "$SERVER_URL/api/ce/task?id=$CE_TASK_ID" | jq -r '.task.status')
+
+          if [ "$CE_STATUS" = "SUCCESS" ]; then
+              break
+          fi
+
+          if [ "$CE_STATUS" = "FAILED" ]; then
+              echo "Analysis processing failed"
+              exit 1
+          fi
+
+          sleep 5
+          done
+
+          ANALYSIS_ID=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+          "$SERVER_URL/api/ce/task?id=$CE_TASK_ID" | jq -r '.task.analysisId')
+
+          QG_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+          "$SERVER_URL/api/qualitygates/project_status?analysisId=$ANALYSIS_ID" \
+          | jq -r '.projectStatus.status')
+
+          echo "Quality Gate status: $QG_STATUS"
+
+          if [ "$QG_STATUS" != "OK" ]; then
+          echo "? Quality Gate failed"
+          exit 1
+          fi
+
+          echo "? Quality Gate approve"
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: sonarqube-analysis
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Login to Docker Hub
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build Docker image
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_REPOSITORY }}
+          IMAGE_TAG=${{ github.sha }}
+
+          # build com duas tags
+          docker build -f src/Drivers/Api/Dockerfile \
+            -t $IMAGE_NAME:$IMAGE_TAG \
+            -t $IMAGE_NAME:latest .
+
+      - name: Push Docker image
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_REPOSITORY }}
+          IMAGE_TAG=${{ github.sha }}
+
+          # push as duas tags
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:latest
+
+      - name: Trigger Infra Deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          repository: hackathon-pos-fiap/fiapx.hackathon.infra.terraform
+          event-type: deploy-api
+          client-payload: |
+            {
+              "image": "${{ secrets.DOCKER_HUB_REPOSITORY }}:${{ github.sha }}"
+            }
