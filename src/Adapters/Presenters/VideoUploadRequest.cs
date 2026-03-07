@@ -3,7 +3,6 @@
 namespace Adapters.Presenters
 {
     [ExcludeFromCodeCoverage]
-    public record VideoUploadRequest
-    {
-    }
+    public record VideoUploadRequest(
+        string FileName);
 }

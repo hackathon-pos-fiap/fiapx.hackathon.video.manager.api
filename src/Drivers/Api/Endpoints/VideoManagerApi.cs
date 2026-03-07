@@ -1,4 +1,5 @@
-﻿using Adapters.Presenters;
+﻿using Adapters.Controllers.Interfaces;
+using Adapters.Presenters;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,12 +18,12 @@ namespace Api.Endpoints
         }
 
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<VideoUploadResponse>>> RequestUploadAsync(
+        public async Task<ActionResult<VideoUploadResponse>> RequestUploadAsync(
             [FromBody] VideoUploadRequest request,
             CancellationToken cancellationToken)
         {
             var response = await _videoController.RequestUploadAsync(request, cancellationToken);
-            return Ok(response);
+            return Created(Request.Path, response);
         }
 
         [HttpGet]

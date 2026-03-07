@@ -3,7 +3,7 @@
 namespace Adapters.Presenters
 {
     [ExcludeFromCodeCoverage]
-    public record VideoUploadResponse
-    {
-    }
+    public record VideoUploadResponse(
+        string VideoId,
+        string UploadUrl);
 }

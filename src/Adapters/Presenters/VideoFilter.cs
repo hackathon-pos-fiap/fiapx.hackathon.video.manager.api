@@ -7,6 +7,6 @@ namespace Adapters.Presenters
 
     public record VideoFilter(
         VideoStatus? Status,
-        int Skip,
-        int Limit);
+        int Skip = 0,
+        int Limit = 10);
 }
