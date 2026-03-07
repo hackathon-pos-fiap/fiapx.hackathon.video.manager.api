@@ -7,6 +7,6 @@ namespace Adapters.Controllers.Interfaces
         Task<VideoUploadResponse> RequestUploadAsync(VideoUploadRequest request, CancellationToken cancellationToken);
         Task<IEnumerable<VideoResponse>> GetAllAsync(VideoFilter filter, CancellationToken cancellationToken);
         Task<VideoResponse> GetByIdAsync(string id, CancellationToken cancellationToken);
-        Task<VideoResponse> UpdateStatusAsync(string id, VideoUpdateStatusRequest request, CancellationToken cancellationToken);
+        Task<VideoResponse?> UpdateStatusAsync(string id, VideoUpdateStatusRequest request, CancellationToken cancellationToken);
     }
 }
