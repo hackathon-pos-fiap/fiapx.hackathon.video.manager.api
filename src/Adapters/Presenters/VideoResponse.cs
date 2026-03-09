@@ -6,7 +6,8 @@ namespace Adapters.Presenters
     [ExcludeFromCodeCoverage]
     public record VideoResponse(
         string? Id,
+        string? UserId,
         string? FileName,
-        string? UploadUrl,
+        string? DownloadUrl,
         VideoStatus Status);
 }

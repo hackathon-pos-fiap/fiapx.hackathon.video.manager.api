@@ -5,5 +5,5 @@ namespace Adapters.Presenters
     [ExcludeFromCodeCoverage]
     public record VideoUploadResponse(
         string VideoId,
-        string UploadUrl);
+        string? UploadUrl);
 }

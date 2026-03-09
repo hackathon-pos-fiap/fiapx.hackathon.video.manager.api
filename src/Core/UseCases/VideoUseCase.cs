@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Entities.Enums;
 using Core.Gateways.Interfaces;
+using Core.Providers.Interfaces;
 using Core.UseCases.Interfaces;
 
 namespace Core.UseCases
@@ -8,32 +9,67 @@ namespace Core.UseCases
     public class VideoUseCase : IVideoUseCase
     {
         private readonly IVideoGateway _videoGateway;
+        private readonly IBucketGateway _bucketGateway;
+        private readonly IUserProvider _userProvider;
 
-        public VideoUseCase(IVideoGateway videoGateway)
+        public VideoUseCase(IVideoGateway videoGateway, IBucketGateway bucketGateway, IUserProvider userProvider)
         {
             _videoGateway = videoGateway;
+            _bucketGateway = bucketGateway;
+            _userProvider = userProvider;
         }
 
         public async Task<IEnumerable<Video>> GetAllAsync(VideoStatus? status, int skip, int limit, CancellationToken cancellationToken)
         {
-            return await _videoGateway.GetAllAsync(status, skip, limit, cancellationToken);
+            var videos = await _videoGateway.GetAllAsync(status, _userProvider.Id, skip, limit, cancellationToken);
+
+            foreach (var video in videos)
+            {
+                await SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+            }
+
+            return videos;
         }
 
         public async Task<Video> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
-            return await _videoGateway.GetByIdAsync(id, cancellationToken);
+            var video = await _videoGateway.GetByIdAsync(id, _userProvider.Id, cancellationToken);
+
+            await SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+
+            return video;
         }
 
         public async Task<Video> RequestUploadAsync(string fileName, CancellationToken cancellationToken)
         {
-            // TODO: handle bucket gateway
-            // TODO: change name of video gateway method to InsertOneAsync
-            return await _videoGateway.RequestUploadAsync(fileName, cancellationToken);
+            var bucketUploadUrl = await _bucketGateway.GenerateUploadUrl(fileName, cancellationToken);
+
+            var video = new Video
+            {
+                UserId = _userProvider.Id,
+                FileName = fileName,
+                Status = VideoStatus.WaitingUpload,
+                UploadUrl = bucketUploadUrl
+            };
+
+            return await _videoGateway.InsertAsync(video, cancellationToken);
         }
 
         public async Task<Video> UpdateStatusAsync(string id, VideoStatus status, CancellationToken cancellationToken)
         {
-            return await _videoGateway.UpdateStatusAsync(id, status, cancellationToken);
+            var video = await _videoGateway.UpdateStatusAsync(id, _userProvider.Id, status, cancellationToken);
+            
+            await SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+
+            return video;
+        }
+
+        private async Task SetDownloadUrlIfVideoIsCompleted(Video video, CancellationToken cancellationToken)
+        {
+            if (video.Status == VideoStatus.Completed)
+            {
+                video.DownloadUrl = await _bucketGateway.GenerateDownloadUrl(video.FileName, cancellationToken);
+            }
         }
     }
 }

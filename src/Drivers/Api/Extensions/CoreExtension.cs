@@ -1,4 +1,6 @@
-﻿using Core.UseCases;
+﻿using Core.Providers;
+using Core.Providers.Interfaces;
+using Core.UseCases;
 using Core.UseCases.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
@@ -9,7 +11,9 @@ namespace Api.Extensions
     {
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
-            services.AddUseCases();
+            services
+                .AddUseCases()
+                .AddProviders();
 
             return services;
         }
@@ -17,6 +21,11 @@ namespace Api.Extensions
         private static IServiceCollection AddUseCases(this IServiceCollection services)
         {
             return services.AddSingleton<IVideoUseCase, VideoUseCase>();
+        }
+
+        private static IServiceCollection AddProviders(this IServiceCollection services)
+        {
+            return services.AddScoped<IUserProvider, UserProvider>();
         }
     }
 }

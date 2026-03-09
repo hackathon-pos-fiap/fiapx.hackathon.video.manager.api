@@ -32,6 +32,6 @@ static void ConfigureServices(IServiceCollection services)
 {
     services
         .AddCore()
-        .AddAdapter()
+        .AddAdapters()
         .AddInfrastructure();
 }

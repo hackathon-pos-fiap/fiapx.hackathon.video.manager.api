@@ -19,7 +19,7 @@ namespace Adapters.Controllers
         {
             IEnumerable<Video> videos = await _videoUseCase.GetAllAsync(filter.Status, filter.Skip, filter.Limit, cancellationToken);
 
-            return videos.Select(video => new VideoResponse(video.Id, video.FileName, video.UploadUrl, video.Status));
+            return videos.Select(video => new VideoResponse(video.Id, video.UserId, video.FileName, video.DownloadUrl, video.Status));
         }
 
         public async Task<VideoResponse> GetByIdAsync(string id, CancellationToken cancellationToken)
@@ -36,7 +36,7 @@ namespace Adapters.Controllers
                 throw new KeyNotFoundException($"Video with ID {id} not found.");
             }
 
-            return new VideoResponse(video.Id, video.FileName, video.UploadUrl, video.Status);
+            return new VideoResponse(video.Id, video.UserId, video.FileName, video.DownloadUrl, video.Status);
         }
 
         public async Task<VideoUploadResponse> RequestUploadAsync(VideoUploadRequest request, CancellationToken cancellationToken)
@@ -60,7 +60,7 @@ namespace Adapters.Controllers
 
             var video = await _videoUseCase.UpdateStatusAsync(id, request.Status, cancellationToken);
 
-            return new VideoResponse(id, video.FileName, video.UploadUrl, video.Status);
+            return new VideoResponse(video.Id, video.UserId, video.FileName, video.DownloadUrl, video.Status);
         }
     }
 }
