@@ -5,9 +5,11 @@ using Core.Exceptions;
 using Infrastructure.DataAccess.MongoAdapter;
 using Infrastructure.DataAccess.MongoAdapter.Contexts.Interfaces;
 using MongoDB.Driver;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Adapters.Gateways.MongoDbs
 {
+    [ExcludeFromCodeCoverage]
     public class VideoMongoDbGateway(IMongoContext mongoContext)
         : MongoGatewayBase<VideoMongoDb>(mongoContext), IVideoMongoDbGateway
     {
