@@ -22,6 +22,23 @@ namespace Adapters.Controllers
             return videos.Select(video => new VideoResponse(video.Id, video.UserId, video.FileName, video.DownloadUrl, video.Status));
         }
 
+        public async Task<VideoResponse> GetByFilenameAsync(string filename, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                throw new ArgumentNullException(nameof(filename));
+            }
+
+            var video = await _videoUseCase.GetByFilenameAsync(filename, cancellationToken);
+
+            if (video is null)
+            {
+                throw new KeyNotFoundException($"Video with filename {filename} not found.");
+            }
+
+            return new VideoResponse(video.Id, video.UserId, video.FileName, video.DownloadUrl, video.Status);
+        }
+
         public async Task<VideoResponse> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(id))

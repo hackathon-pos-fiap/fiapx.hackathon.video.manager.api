@@ -7,6 +7,7 @@ namespace Core.Gateways.Interfaces
     {
         Task<IEnumerable<Video>> GetAllAsync(VideoStatus? status, string userId, int skip, int limit, CancellationToken cancellationToken);
         Task<Video> GetByIdAsync(string id, string userId, CancellationToken cancellationToken);
+        Task<Video> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken);
         Task<Video> InsertAsync(Video video, CancellationToken cancellationToken);
         Task<Video> UpdateStatusAsync(string id, string userId, VideoStatus status, CancellationToken cancellationToken);
     }

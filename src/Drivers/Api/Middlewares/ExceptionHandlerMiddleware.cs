@@ -22,6 +22,10 @@ namespace Api.Middlewares
             {
                 await HandleExceptionAsync(context, ex, StatusCodes.Status409Conflict);
             }
+            catch (KeyNotFoundException ex)
+            {
+                await HandleExceptionAsync(context, ex, StatusCodes.Status404NotFound);
+            }
             catch (Exception ex)
             {
                 await HandleExceptionAsync(context, ex, StatusCodes.Status400BadRequest);

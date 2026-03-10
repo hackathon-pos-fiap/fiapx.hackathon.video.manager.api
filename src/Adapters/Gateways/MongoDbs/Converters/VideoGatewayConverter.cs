@@ -22,6 +22,13 @@ namespace Adapters.Gateways.MongoDbs.Converters
             return VideoMongoDb.ToCore(videoMongoDbList);
         }
 
+        public async Task<Video> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)
+        {
+            var videoMongoDb = await _videoMongoDbGateway.GetByFilenameAsync(filename, userId, cancellationToken);
+
+            return VideoMongoDb.ToCore(videoMongoDb);
+        }
+
         public async Task<Video> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
         {
             var videoMongoDb = await _videoMongoDbGateway.GetByIdAsync(id, userId, cancellationToken);

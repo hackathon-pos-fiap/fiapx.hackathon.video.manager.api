@@ -27,6 +27,11 @@ namespace UnitTests
                 return Task.FromResult<IEnumerable<Video>>(videos);
             }
 
+            public Task<Video> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)
+            {
+                return Task.FromResult(new Video { Id = Guid.NewGuid().ToString(), UserId = userId, FileName = filename, Status = VideoStatus.Completed });
+            }
+
             public Task<Video> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
             {
                 return Task.FromResult(new Video { Id = id, UserId = userId, FileName = "file.mp4", Status = VideoStatus.Completed });
@@ -54,6 +59,7 @@ namespace UnitTests
         private class FakeUserProvider : IUserProvider
         {
             public string Id { get; set; } = "user-1";
+            public string? Cpf { get; set; } = "123.456.789-00";
         }
 
         [Fact]

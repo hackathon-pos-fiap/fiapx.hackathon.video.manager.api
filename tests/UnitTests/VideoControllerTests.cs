@@ -22,6 +22,12 @@ namespace UnitTests
                 return Task.FromResult<IEnumerable<Video>>(videos);
             }
 
+            public Task<Video> GetByFilenameAsync(string filename, CancellationToken cancellationToken)
+            {
+                if (filename == "notfound") return Task.FromResult<Video?>(null!);
+                return Task.FromResult(new Video { Id = Guid.NewGuid().ToString(), UserId = "u1", FileName = filename, Status = VideoStatus.Completed, DownloadUrl = "d" });
+            }
+
             public Task<Video> GetByIdAsync(string id, CancellationToken cancellationToken)
             {
                 if (id == "notfound") return Task.FromResult<Video?>(null!);

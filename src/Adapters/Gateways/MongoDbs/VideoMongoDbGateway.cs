@@ -37,6 +37,24 @@ namespace Adapters.Gateways.MongoDbs
             return cursor.ToEnumerable(cancellationToken: cancellationToken);
         }
 
+        public async Task<VideoMongoDb> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)
+        {
+            var builder = Builders<VideoMongoDb>.Filter;
+            var filters = new List<FilterDefinition<VideoMongoDb>>
+            {
+                builder.Eq(e => e.FileName, filename),
+                builder.Eq(e => e.UserId, userId)
+            };
+
+            var finalFilter = builder.And(filters);
+
+            var video = await _collection
+                .Find(finalFilter)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return video;
+        }
+
         public async Task<VideoMongoDb> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
         {
             var builder = Builders<VideoMongoDb>.Filter;
