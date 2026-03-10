@@ -25,7 +25,7 @@ namespace Core.UseCases
 
             foreach (var video in videos)
             {
-                await SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+                SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
             }
 
             return videos;
@@ -35,14 +35,14 @@ namespace Core.UseCases
         {
             var video = await _videoGateway.GetByIdAsync(id, _userProvider.Id, cancellationToken);
 
-            await SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+            SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
 
             return video;
         }
 
         public async Task<Video> RequestUploadAsync(string fileName, CancellationToken cancellationToken)
         {
-            var bucketUploadUrl = await _bucketGateway.GenerateUploadUrl(fileName, cancellationToken);
+            var bucketUploadUrl = _bucketGateway.GenerateUploadUrl(fileName, cancellationToken);
 
             var video = new Video
             {
@@ -59,16 +59,16 @@ namespace Core.UseCases
         {
             var video = await _videoGateway.UpdateStatusAsync(id, _userProvider.Id, status, cancellationToken);
             
-            await SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+            SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
 
             return video;
         }
 
-        private async Task SetDownloadUrlIfVideoIsCompleted(Video video, CancellationToken cancellationToken)
+        private void SetDownloadUrlIfVideoIsCompleted(Video video, CancellationToken cancellationToken)
         {
             if (video.Status == VideoStatus.Completed)
             {
-                video.DownloadUrl = await _bucketGateway.GenerateDownloadUrl(video.FileName, cancellationToken);
+                video.DownloadUrl = _bucketGateway.GenerateDownloadUrl(video.FileName, cancellationToken);
             }
         }
     }
