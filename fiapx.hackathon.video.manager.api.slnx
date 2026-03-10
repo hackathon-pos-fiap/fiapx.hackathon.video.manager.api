@@ -1,5 +1,8 @@
 <Solution>
-  <Folder Name="/Solution Items/" />
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/pipeline-dispatch-workflow.yml" />
+    <File Path=".github/workflows/pipeline-main.yml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Adapters/Adapters.csproj" Id="02f80549-4342-456f-8eed-277cc3c63812" />
     <Project Path="src/Core/Core.csproj" Id="288b32e6-954a-47f6-b370-778dc61c6935" />
@@ -8,5 +11,7 @@
     <Project Path="src/Drivers/Api/Api.csproj" Id="b5b62b88-6fb9-4325-9156-119ef8ec887d" />
     <Project Path="src/Drivers/Infrastructure/Infrastructure.csproj" Id="c63ec7b1-01a0-43ca-9767-7c5fc010478d" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/UnitTests/UnitTests.csproj" Id="46741f5a-274d-4434-a949-bc870d64ab38" />
+  </Folder>
 </Solution>

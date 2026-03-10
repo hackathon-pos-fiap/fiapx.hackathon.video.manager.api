@@ -13,6 +13,9 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Drivers/Api/Api.csproj", "src/Drivers/Api/"]
+COPY ["src/Core/Core.csproj", "src/Core/"]
+COPY ["src/Adapters/Adapters.csproj", "src/Adapters/"]
+COPY ["src/Drivers/Infrastructure/Infrastructure.csproj", "src/Drivers/Infrastructure/"]
 RUN dotnet restore "./src/Drivers/Api/Api.csproj"
 COPY . .
 WORKDIR "/src/src/Drivers/Api"

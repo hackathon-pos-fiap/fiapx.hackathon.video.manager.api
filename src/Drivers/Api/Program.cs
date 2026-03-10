@@ -1,4 +1,5 @@
 using Api.Extensions;
+using Api.Middlewares;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseMiddleware<AuthMiddleware>();
+
 app.MapControllers();
 
 app.Run();
@@ -32,6 +36,6 @@ static void ConfigureServices(IServiceCollection services)
 {
     services
         .AddCore()
-        .AddAdapter()
+        .AddAdapters()
         .AddInfrastructure();
 }
