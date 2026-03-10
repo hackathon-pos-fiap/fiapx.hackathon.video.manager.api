@@ -150,7 +150,7 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
           repository: hackathon-pos-fiap/fiapx.hackathon.infra.terraform
-          event-type: deploy-api
+          event-type: deploy-video-api
           client-payload: |
             {
               "image": "${{ secrets.DOCKER_HUB_REPOSITORY }}:${{ github.sha }}"
