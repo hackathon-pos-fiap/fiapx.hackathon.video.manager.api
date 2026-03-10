@@ -3,11 +3,13 @@ using Adapters.Presenters;
 using Core.Entities;
 using Core.Entities.Enums;
 using Core.UseCases.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UnitTests
 {
     public class VideoControllerTests
     {
+        [ExcludeFromCodeCoverage]
         private class FakeUseCase : IVideoUseCase
         {
             public Task<IEnumerable<Video>> GetAllAsync(VideoStatus? status, int skip, int limit, CancellationToken cancellationToken)
