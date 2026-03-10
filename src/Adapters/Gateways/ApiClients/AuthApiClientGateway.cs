@@ -1,11 +1,13 @@
 ﻿using Adapters.Gateways.ApiClients.DTOs;
 using Adapters.Gateways.ApiClients.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Adapters.Gateways.ApiClients
 {
+    [ExcludeFromCodeCoverage]
     public class AuthApiClientGateway : IAuthApiClientGateway
     {
         private readonly HttpClient _httpClient;
