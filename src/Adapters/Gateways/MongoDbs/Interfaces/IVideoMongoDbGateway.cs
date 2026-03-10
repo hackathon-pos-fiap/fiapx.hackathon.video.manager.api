@@ -7,6 +7,7 @@ namespace Adapters.Gateways.MongoDbs.Interfaces
     {
         Task<IEnumerable<VideoMongoDb>> GetAllAsync(VideoStatus? status, string userId, int skip, int limit, CancellationToken cancellationToken);
         Task<VideoMongoDb> GetByIdAsync(string id, string userId, CancellationToken cancellationToken);
+        Task<VideoMongoDb> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken);
         Task<VideoMongoDb> InsertAsync(VideoMongoDb video, CancellationToken cancellationToken);
         Task<VideoMongoDb> UpdateStatusAsync(string id, string userId, VideoStatus status, CancellationToken cancellationToken);
     }

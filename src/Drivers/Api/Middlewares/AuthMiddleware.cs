@@ -39,6 +39,7 @@ namespace Api.Middlewares
             {
                 var userId = await authGateway.GetUserIdFromTokenAsync(token, customerCpfHeader, context.RequestAborted);
                 userProvider.Id = userId;
+                userProvider.Cpf = customerCpfHeader;
             }
             catch (Exception ex)
             {

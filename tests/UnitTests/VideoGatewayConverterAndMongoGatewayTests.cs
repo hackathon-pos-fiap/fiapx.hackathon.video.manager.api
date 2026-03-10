@@ -35,6 +35,13 @@ namespace UnitTests
                 return Task.FromResult<IEnumerable<VideoMongoDb>>(list);
             }
 
+            public Task<VideoMongoDb> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)
+            {
+                var v = new VideoMongoDb(new Video { Id = Guid.NewGuid().ToString(), UserId = userId, FileName = filename, Status = VideoStatus.Completed });
+                v.FileName = filename;
+                return Task.FromResult(v);
+            }
+
             public Task<VideoMongoDb> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
             {
                 var v = new VideoMongoDb(new Video { Id = id, UserId = userId, FileName = "f.mp4", Status = VideoStatus.Completed });

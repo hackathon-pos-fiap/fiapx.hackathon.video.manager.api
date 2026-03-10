@@ -31,6 +31,15 @@ namespace Core.UseCases
             return videos;
         }
 
+        public async Task<Video> GetByFilenameAsync(string filename, CancellationToken cancellationToken)
+        {
+            var video = await _videoGateway.GetByFilenameAsync(filename, _userProvider.Id, cancellationToken);
+
+            SetDownloadUrlIfVideoIsCompleted(video, cancellationToken);
+
+            return video;
+        }
+
         public async Task<Video> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             var video = await _videoGateway.GetByIdAsync(id, _userProvider.Id, cancellationToken);
@@ -47,7 +56,7 @@ namespace Core.UseCases
             var video = new Video
             {
                 UserId = _userProvider.Id,
-                FileName = fileName,
+                FileName = $"{fileName}-{_userProvider.Cpf}",
                 Status = VideoStatus.WaitingUpload,
                 UploadUrl = bucketUploadUrl
             };

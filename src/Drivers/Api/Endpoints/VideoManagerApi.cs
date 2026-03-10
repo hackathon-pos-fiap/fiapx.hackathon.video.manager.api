@@ -42,6 +42,13 @@ namespace Api.Endpoints
             return Ok(response);
         }
 
+        [HttpGet("filename/{filename}", Name = "GetByFilename")]
+        public async Task<ActionResult<VideoResponse>> GetByFilenameAsync(string filename, CancellationToken cancellationToken)
+        {
+            var response = await _videoController.GetByFilenameAsync(filename, cancellationToken);
+            return Ok(response);
+        }
+
         [HttpPatch("{id}/status", Name = "UpdateStatusAsync")]
         public async Task<ActionResult<VideoResponse>> UpdateStatusAsync(
             string id,
