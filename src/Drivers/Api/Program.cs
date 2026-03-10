@@ -1,4 +1,5 @@
 using Api.Extensions;
+using Api.Middlewares;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseMiddleware<AuthMiddleware>();
 
 app.MapControllers();
 

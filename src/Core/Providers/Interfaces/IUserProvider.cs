@@ -2,6 +2,6 @@
 {
     public interface IUserProvider
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
     }
 }

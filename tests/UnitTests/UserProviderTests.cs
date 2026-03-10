@@ -10,7 +10,7 @@ namespace UnitTests
         {
             var provider = new UserProvider();
 
-            Assert.False(string.IsNullOrWhiteSpace(provider.Id));
+            Assert.True(string.IsNullOrWhiteSpace(provider.Id));
         }
 
         [Fact]

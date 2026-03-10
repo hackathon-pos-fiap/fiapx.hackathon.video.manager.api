@@ -4,6 +4,6 @@ namespace Core.Providers
 {
     public class UserProvider : IUserProvider
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string? Id { get; set; }
     }
 }
