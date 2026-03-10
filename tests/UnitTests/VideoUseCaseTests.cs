@@ -45,7 +45,7 @@ namespace UnitTests
             }
         }
 
-        private class FakeBucketGateway : IBucketGateway
+        internal class FakeBucketGateway : IBucketGateway
         {
             public string GenerateDownloadUrl(string fileName, CancellationToken cancellationToken) => $"download://{fileName}";
             public string GenerateUploadUrl(string fileName, CancellationToken cancellationToken) => $"upload://{fileName}";

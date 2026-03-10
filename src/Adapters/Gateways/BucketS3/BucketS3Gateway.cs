@@ -1,9 +1,11 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Core.Gateways.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Adapters.Gateways.BucketS3
 {
+    [ExcludeFromCodeCoverage]
     public class BucketS3Gateway : IBucketGateway
     {
         private const string BUCKET_NAME = "fiapx-video-worker-lgrando";

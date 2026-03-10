@@ -1,7 +1,9 @@
 ﻿using Core.Entities.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Core.Entities
 {
+    [ExcludeFromCodeCoverage]
     public class Video
     {
         public string Id { get; set; } = string.Empty;
