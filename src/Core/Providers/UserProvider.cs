@@ -5,5 +5,6 @@ namespace Core.Providers
     public class UserProvider : IUserProvider
     {
         public string? Id { get; set; }
+        public string? Cpf { get; set; }
     }
 }

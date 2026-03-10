@@ -47,7 +47,7 @@ namespace Core.UseCases
             var video = new Video
             {
                 UserId = _userProvider.Id,
-                FileName = fileName,
+                FileName = $"{fileName}-{_userProvider.Cpf}",
                 Status = VideoStatus.WaitingUpload,
                 UploadUrl = bucketUploadUrl
             };
