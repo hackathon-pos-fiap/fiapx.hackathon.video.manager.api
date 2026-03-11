@@ -93,5 +93,46 @@ namespace UnitTests
             var nullResult = await controller.UpdateStatusAsync("1", new VideoUpdateStatusRequest(VideoStatus.None), CancellationToken.None);
             Assert.Null(nullResult);
         }
+
+        // New tests covering GetByFilenameAsync and UpdateStatus success mapping
+        [Fact]
+        public async Task GetByFilenameAsync_ThrowsOnEmptyFilename()
+        {
+            var controller = new VideoController(new FakeUseCase());
+
+            await Assert.ThrowsAsync<System.ArgumentNullException>(() => controller.GetByFilenameAsync("", CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetByFilenameAsync_ThrowsWhenNotFound()
+        {
+            var controller = new VideoController(new FakeUseCase());
+
+            await Assert.ThrowsAsync<System.Collections.Generic.KeyNotFoundException>(() => controller.GetByFilenameAsync("notfound", CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetByFilenameAsync_ReturnsMappedResponse()
+        {
+            var controller = new VideoController(new FakeUseCase());
+
+            var resp = await controller.GetByFilenameAsync("myvideo.mp4", CancellationToken.None);
+
+            Assert.Equal("myvideo.mp4", resp.FileName);
+            Assert.Equal(VideoStatus.Completed, resp.Status);
+            Assert.Equal("d", resp.DownloadUrl);
+        }
+
+        [Fact]
+        public async Task UpdateStatusAsync_ReturnsMappedResponse_WhenValid()
+        {
+            var controller = new VideoController(new FakeUseCase());
+
+            var resp = await controller.UpdateStatusAsync("1", new VideoUpdateStatusRequest(VideoStatus.Completed), CancellationToken.None);
+
+            Assert.NotNull(resp);
+            Assert.Equal(VideoStatus.Completed, resp!.Status);
+            Assert.Equal("d", resp.DownloadUrl);
+        }
     }
 }
