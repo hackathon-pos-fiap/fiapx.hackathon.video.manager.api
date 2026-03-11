@@ -80,7 +80,7 @@ namespace Core.UseCases
         {
             if (video.Status == VideoStatus.Finished)
             {
-                video.DownloadUrl = _bucketGateway.GenerateDownloadUrl(video.FileName, cancellationToken);
+                video.DownloadUrl = _bucketGateway.GenerateDownloadUrl(video.FileName.Replace(".mp4", ".zip"), cancellationToken);
             }
         }
     }

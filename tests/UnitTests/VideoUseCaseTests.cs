@@ -78,7 +78,7 @@ namespace UnitTests
             var waiting = videos.Single(v => v.FileName == "waiting.mp4");
 
             Assert.Equal(VideoStatus.Finished, completed.Status);
-            Assert.Equal("download://completed.mp4", completed.DownloadUrl);
+            Assert.Equal("download://completed.zip", completed.DownloadUrl);
             Assert.Null(waiting.DownloadUrl);
         }
 
@@ -93,7 +93,7 @@ namespace UnitTests
 
             var video = await useCase.GetByIdAsync("id-1", CancellationToken.None);
 
-            Assert.Equal("download://file.mp4", video.DownloadUrl);
+            Assert.Equal("download://file.zip", video.DownloadUrl);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace UnitTests
 
             var video = await useCase.UpdateStatusAsync("id-2", VideoStatus.Finished, CancellationToken.None);
 
-            Assert.Equal("download://file.mp4", video.DownloadUrl);
+            Assert.Equal("download://file.zip", video.DownloadUrl);
             Assert.Equal(VideoStatus.Finished, video.Status);
         }
     }
