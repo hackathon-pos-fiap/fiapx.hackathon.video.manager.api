@@ -20,7 +20,7 @@ namespace Api.Extensions
 
         private static IServiceCollection AddUseCases(this IServiceCollection services)
         {
-            return services.AddSingleton<IVideoUseCase, VideoUseCase>();
+            return services.AddScoped<IVideoUseCase, VideoUseCase>();
         }
 
         private static IServiceCollection AddProviders(this IServiceCollection services)

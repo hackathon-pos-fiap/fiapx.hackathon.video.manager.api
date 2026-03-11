@@ -34,7 +34,7 @@ namespace Adapters.Gateways.MongoDbs
                 .Limit(limit);
 
             var cursor = await query.ToCursorAsync(cancellationToken);
-            return cursor.ToEnumerable(cancellationToken: cancellationToken);
+            return cursor.ToList(cancellationToken: cancellationToken);
         }
 
         public async Task<VideoMongoDb> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)

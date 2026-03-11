@@ -30,7 +30,7 @@ namespace Api.Middlewares
 
             var token = authorizationHeader.Substring("Bearer ".Length).Trim();
 
-            if (!string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
                 throw new UnauthorizedException("Missing token.");
             }

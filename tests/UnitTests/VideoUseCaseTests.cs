@@ -20,7 +20,7 @@ namespace UnitTests
 
                 var videos = new List<Video>
                 {
-                    new Video { Id = "1", UserId = userId, FileName = "completed.mp4", Status = VideoStatus.Completed },
+                    new Video { Id = "1", UserId = userId, FileName = "completed.mp4", Status = VideoStatus.Finished },
                     new Video { Id = "2", UserId = userId, FileName = "waiting.mp4", Status = VideoStatus.WaitingUpload }
                 };
 
@@ -29,12 +29,12 @@ namespace UnitTests
 
             public Task<Video> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)
             {
-                return Task.FromResult(new Video { Id = Guid.NewGuid().ToString(), UserId = userId, FileName = filename, Status = VideoStatus.Completed });
+                return Task.FromResult(new Video { Id = Guid.NewGuid().ToString(), UserId = userId, FileName = filename, Status = VideoStatus.Finished });
             }
 
             public Task<Video> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
             {
-                return Task.FromResult(new Video { Id = id, UserId = userId, FileName = "file.mp4", Status = VideoStatus.Completed });
+                return Task.FromResult(new Video { Id = id, UserId = userId, FileName = "file.mp4", Status = VideoStatus.Finished });
             }
 
             public Task<Video> InsertAsync(Video video, CancellationToken cancellationToken)
@@ -77,7 +77,7 @@ namespace UnitTests
             var completed = videos.Single(v => v.FileName == "completed.mp4");
             var waiting = videos.Single(v => v.FileName == "waiting.mp4");
 
-            Assert.Equal(VideoStatus.Completed, completed.Status);
+            Assert.Equal(VideoStatus.Finished, completed.Status);
             Assert.Equal("download://completed.mp4", completed.DownloadUrl);
             Assert.Null(waiting.DownloadUrl);
         }
@@ -122,10 +122,10 @@ namespace UnitTests
 
             IVideoUseCase useCase = new VideoUseCase(videoGateway, bucket, user);
 
-            var video = await useCase.UpdateStatusAsync("id-2", VideoStatus.Completed, CancellationToken.None);
+            var video = await useCase.UpdateStatusAsync("id-2", VideoStatus.Finished, CancellationToken.None);
 
             Assert.Equal("download://file.mp4", video.DownloadUrl);
-            Assert.Equal(VideoStatus.Completed, video.Status);
+            Assert.Equal(VideoStatus.Finished, video.Status);
         }
     }
 }
