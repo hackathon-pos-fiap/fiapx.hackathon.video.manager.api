@@ -13,7 +13,10 @@ namespace Adapters.Gateways.BucketS3
 
         public BucketS3Gateway()
         {
-            _s3Client = new AmazonS3Client(Amazon.RegionEndpoint.USEast1);
+            var bucketAccessKeyId = Environment.GetEnvironmentVariable("BUCKET_ACCESS_KEY_ID");
+            var bucketSecretKey = Environment.GetEnvironmentVariable("BUCKET_SECRET_KEY");
+
+            _s3Client = new AmazonS3Client(bucketAccessKeyId, bucketSecretKey, Amazon.RegionEndpoint.USEast1);
         }
 
         public string GenerateDownloadUrl(string fileName, CancellationToken cancellationToken)

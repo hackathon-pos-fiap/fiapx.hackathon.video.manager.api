@@ -26,12 +26,18 @@ namespace Adapters.Gateways.MongoDbs.Converters
         {
             var videoMongoDb = await _videoMongoDbGateway.GetByFilenameAsync(filename, userId, cancellationToken);
 
+            if (videoMongoDb == null)
+                throw new KeyNotFoundException($"Video with filename {filename} not found.");
+
             return VideoMongoDb.ToCore(videoMongoDb);
         }
 
         public async Task<Video> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
         {
             var videoMongoDb = await _videoMongoDbGateway.GetByIdAsync(id, userId, cancellationToken);
+
+            if (videoMongoDb == null)
+                throw new KeyNotFoundException($"Video with id {id} not found.");
 
             return VideoMongoDb.ToCore(videoMongoDb);
         }
@@ -42,7 +48,7 @@ namespace Adapters.Gateways.MongoDbs.Converters
 
             var insertedVideoMongoDb = await _videoMongoDbGateway.InsertAsync(videoMongoDb, cancellationToken);
 
-            return VideoMongoDb.ToCore(insertedVideoMongoDb);
+            return insertedVideoMongoDb.ToCore();
         }
 
         public async Task<Video> UpdateStatusAsync(string id, string userId, VideoStatus status, CancellationToken cancellationToken)

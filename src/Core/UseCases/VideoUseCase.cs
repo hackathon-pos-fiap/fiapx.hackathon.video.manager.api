@@ -56,12 +56,15 @@ namespace Core.UseCases
             var video = new Video
             {
                 UserId = _userProvider.Id,
-                FileName = $"{fileName}-{_userProvider.Cpf}",
+                FileName = $"{_userProvider.Cpf}-{fileName}",
                 Status = VideoStatus.WaitingUpload,
                 UploadUrl = bucketUploadUrl
             };
 
-            return await _videoGateway.InsertAsync(video, cancellationToken);
+            var videoEntity = await _videoGateway.InsertAsync(video, cancellationToken);
+
+            video.Id = videoEntity.Id;
+            return video;
         }
 
         public async Task<Video> UpdateStatusAsync(string id, VideoStatus status, CancellationToken cancellationToken)
@@ -75,7 +78,7 @@ namespace Core.UseCases
 
         private void SetDownloadUrlIfVideoIsCompleted(Video video, CancellationToken cancellationToken)
         {
-            if (video.Status == VideoStatus.Completed)
+            if (video.Status == VideoStatus.Finished)
             {
                 video.DownloadUrl = _bucketGateway.GenerateDownloadUrl(video.FileName, cancellationToken);
             }

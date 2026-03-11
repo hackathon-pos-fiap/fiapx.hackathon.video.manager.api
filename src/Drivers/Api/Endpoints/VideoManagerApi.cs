@@ -27,7 +27,7 @@ namespace Api.Endpoints
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VideoResponse>>> GetAllAsync(
+        public async Task<IActionResult> GetAllAsync(
             [FromQuery] VideoFilter filter,
             CancellationToken cancellationToken)
         {

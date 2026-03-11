@@ -16,7 +16,7 @@ namespace UnitTests
             {
                 var videos = new List<Video>
                 {
-                    new Video { Id = "1", UserId = "u1", FileName = "a.mp4", Status = VideoStatus.Completed, DownloadUrl = "d1" },
+                    new Video { Id = "1", UserId = "u1", FileName = "a.mp4", Status = VideoStatus.Finished, DownloadUrl = "d1" },
                     new Video { Id = "2", UserId = "u1", FileName = "b.mp4", Status = VideoStatus.WaitingUpload }
                 };
                 return Task.FromResult<IEnumerable<Video>>(videos);
@@ -25,13 +25,13 @@ namespace UnitTests
             public Task<Video> GetByFilenameAsync(string filename, CancellationToken cancellationToken)
             {
                 if (filename == "notfound") return Task.FromResult<Video?>(null!);
-                return Task.FromResult(new Video { Id = Guid.NewGuid().ToString(), UserId = "u1", FileName = filename, Status = VideoStatus.Completed, DownloadUrl = "d" });
+                return Task.FromResult(new Video { Id = Guid.NewGuid().ToString(), UserId = "u1", FileName = filename, Status = VideoStatus.Finished, DownloadUrl = "d" });
             }
 
             public Task<Video> GetByIdAsync(string id, CancellationToken cancellationToken)
             {
                 if (id == "notfound") return Task.FromResult<Video?>(null!);
-                return Task.FromResult(new Video { Id = id, UserId = "u1", FileName = "file.mp4", Status = VideoStatus.Completed, DownloadUrl = "d" });
+                return Task.FromResult(new Video { Id = id, UserId = "u1", FileName = "file.mp4", Status = VideoStatus.Finished, DownloadUrl = "d" });
             }
 
             public Task<Video> RequestUploadAsync(string fileName, CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ namespace UnitTests
 
             public Task<Video> UpdateStatusAsync(string id, VideoStatus status, CancellationToken cancellationToken)
             {
-                return Task.FromResult(new Video { Id = id, UserId = "u1", FileName = "file.mp4", Status = status, DownloadUrl = status == VideoStatus.Completed ? "d" : null });
+                return Task.FromResult(new Video { Id = id, UserId = "u1", FileName = "file.mp4", Status = status, DownloadUrl = status == VideoStatus.Finished ? "d" : null });
             }
         }
 
@@ -88,7 +88,7 @@ namespace UnitTests
         {
             var controller = new VideoController(new FakeUseCase());
 
-            await Assert.ThrowsAsync<System.ArgumentNullException>(() => controller.UpdateStatusAsync("", new VideoUpdateStatusRequest(VideoStatus.Completed), CancellationToken.None));
+            await Assert.ThrowsAsync<System.ArgumentNullException>(() => controller.UpdateStatusAsync("", new VideoUpdateStatusRequest(VideoStatus.Finished), CancellationToken.None));
 
             var nullResult = await controller.UpdateStatusAsync("1", new VideoUpdateStatusRequest(VideoStatus.None), CancellationToken.None);
             Assert.Null(nullResult);
@@ -119,7 +119,7 @@ namespace UnitTests
             var resp = await controller.GetByFilenameAsync("myvideo.mp4", CancellationToken.None);
 
             Assert.Equal("myvideo.mp4", resp.FileName);
-            Assert.Equal(VideoStatus.Completed, resp.Status);
+            Assert.Equal(VideoStatus.Finished, resp.Status);
             Assert.Equal("d", resp.DownloadUrl);
         }
 
@@ -128,10 +128,10 @@ namespace UnitTests
         {
             var controller = new VideoController(new FakeUseCase());
 
-            var resp = await controller.UpdateStatusAsync("1", new VideoUpdateStatusRequest(VideoStatus.Completed), CancellationToken.None);
+            var resp = await controller.UpdateStatusAsync("1", new VideoUpdateStatusRequest(VideoStatus.Finished), CancellationToken.None);
 
             Assert.NotNull(resp);
-            Assert.Equal(VideoStatus.Completed, resp!.Status);
+            Assert.Equal(VideoStatus.Finished, resp!.Status);
             Assert.Equal("d", resp.DownloadUrl);
         }
     }

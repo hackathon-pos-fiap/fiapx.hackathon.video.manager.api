@@ -24,8 +24,8 @@ namespace UnitTests
             {
                 var list = new List<VideoMongoDb>
                 {
-                    new VideoMongoDb(new Video { Id = "1", UserId = userId, FileName = "a.mp4", Status = VideoStatus.Completed }),
-                    new VideoMongoDb(new Video { Id = "2", UserId = userId, FileName = "b.mp4", Status = VideoStatus.InQueue })
+                    new VideoMongoDb(new Video { Id = "1", UserId = userId, FileName = "a.mp4", Status = VideoStatus.Finished }),
+                    new VideoMongoDb(new Video { Id = "2", UserId = userId, FileName = "b.mp4", Status = VideoStatus.Processing })
                 };
 
                 // ensure ids are set
@@ -37,14 +37,14 @@ namespace UnitTests
 
             public Task<VideoMongoDb> GetByFilenameAsync(string filename, string userId, CancellationToken cancellationToken)
             {
-                var v = new VideoMongoDb(new Video { Id = Guid.NewGuid().ToString(), UserId = userId, FileName = filename, Status = VideoStatus.Completed });
+                var v = new VideoMongoDb(new Video { Id = Guid.NewGuid().ToString(), UserId = userId, FileName = filename, Status = VideoStatus.Finished });
                 v.FileName = filename;
                 return Task.FromResult(v);
             }
 
             public Task<VideoMongoDb> GetByIdAsync(string id, string userId, CancellationToken cancellationToken)
             {
-                var v = new VideoMongoDb(new Video { Id = id, UserId = userId, FileName = "f.mp4", Status = VideoStatus.Completed });
+                var v = new VideoMongoDb(new Video { Id = id, UserId = userId, FileName = "f.mp4", Status = VideoStatus.Finished });
                 v.Id = id;
                 return Task.FromResult(v);
             }
@@ -107,10 +107,10 @@ namespace UnitTests
             var fake = new FakeVideoMongoGateway();
             var converter = new VideoGatewayConverter(fake);
 
-            var res = await converter.UpdateStatusAsync("id-u", "u", VideoStatus.Completed, CancellationToken.None);
+            var res = await converter.UpdateStatusAsync("id-u", "u", VideoStatus.Finished, CancellationToken.None);
 
             Assert.Equal("id-u", res.Id);
-            Assert.Equal(VideoStatus.Completed, res.Status);
+            Assert.Equal(VideoStatus.Finished, res.Status);
         }
     }
 
@@ -138,13 +138,13 @@ namespace UnitTests
         [Fact]
         public async Task MongoGateway_UpdateStatusAsync_ReturnsUpdated()
         {
-            var initial = new VideoMongoDb(new Video { Id = "1", UserId = "u1", FileName = "a.mp4", Status = VideoStatus.InQueue }) { Id = "1" };
+            var initial = new VideoMongoDb(new Video { Id = "1", UserId = "u1", FileName = "a.mp4", Status = VideoStatus.Processing }) { Id = "1" };
 
             var mockCollection = new Mock<IMongoCollection<VideoMongoDb>>();
             mockCollection.Setup(c => c.FindOneAndUpdateAsync(It.IsAny<FilterDefinition<VideoMongoDb>>(), It.IsAny<UpdateDefinition<VideoMongoDb>>(), It.IsAny<FindOneAndUpdateOptions<VideoMongoDb>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                 {
-                    initial.Status = VideoStatus.Completed;
+                    initial.Status = VideoStatus.Finished;
                     return initial;
                 });
 
@@ -153,10 +153,10 @@ namespace UnitTests
 
             var gateway = new VideoMongoDbGateway(mockContext.Object);
 
-            var res = await gateway.UpdateStatusAsync("1", "u1", VideoStatus.Completed, CancellationToken.None);
+            var res = await gateway.UpdateStatusAsync("1", "u1", VideoStatus.Finished, CancellationToken.None);
 
             Assert.NotNull(res);
-            Assert.Equal(VideoStatus.Completed, res.Status);
+            Assert.Equal(VideoStatus.Finished, res.Status);
         }
     }
 }
