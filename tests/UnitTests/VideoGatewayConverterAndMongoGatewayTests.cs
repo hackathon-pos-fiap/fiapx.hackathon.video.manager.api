@@ -112,6 +112,43 @@ namespace UnitTests
             Assert.Equal("id-u", res.Id);
             Assert.Equal(VideoStatus.Finished, res.Status);
         }
+
+        [Fact]
+        public async Task Converter_GetByFilenameAsync_ConvertsToCore()
+        {
+            var mock = new Mock<IVideoMongoDbGateway>();
+            var vm = new VideoMongoDb(new Video { Id = "v1", UserId = "u1", FileName = "file.mp4", Status = VideoStatus.Finished }) { Id = "v1" };
+            mock.Setup(m => m.GetByFilenameAsync("file.mp4", "u1", It.IsAny<CancellationToken>())).ReturnsAsync(vm);
+
+            var converter = new VideoGatewayConverter(mock.Object);
+
+            var res = await converter.GetByFilenameAsync("file.mp4", "u1", CancellationToken.None);
+
+            Assert.Equal("v1", res.Id);
+            Assert.Equal("file.mp4", res.FileName);
+        }
+
+        [Fact]
+        public async Task Converter_GetByFilenameAsync_ThrowsWhenNotFound()
+        {
+            var mock = new Mock<IVideoMongoDbGateway>();
+            mock.Setup(m => m.GetByFilenameAsync("nf", "u1", It.IsAny<CancellationToken>())).ReturnsAsync((VideoMongoDb?)null);
+
+            var converter = new VideoGatewayConverter(mock.Object);
+
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => converter.GetByFilenameAsync("nf", "u1", CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task Converter_GetByIdAsync_ThrowsWhenNotFound()
+        {
+            var mock = new Mock<IVideoMongoDbGateway>();
+            mock.Setup(m => m.GetByIdAsync("nf", "u1", It.IsAny<CancellationToken>())).ReturnsAsync((VideoMongoDb?)null);
+
+            var converter = new VideoGatewayConverter(mock.Object);
+
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => converter.GetByIdAsync("nf", "u1", CancellationToken.None));
+        }
     }
 
     public class VideoMongoDbGatewayTests
