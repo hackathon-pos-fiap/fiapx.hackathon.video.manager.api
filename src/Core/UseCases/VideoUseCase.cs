@@ -51,12 +51,14 @@ namespace Core.UseCases
 
         public async Task<Video> RequestUploadAsync(string fileName, CancellationToken cancellationToken)
         {
-            var bucketUploadUrl = _bucketGateway.GenerateUploadUrl(fileName, cancellationToken);
+            var newFileName = $"{_userProvider.Cpf}-{fileName}";
+
+            var bucketUploadUrl = _bucketGateway.GenerateUploadUrl(newFileName, cancellationToken);
 
             var video = new Video
             {
                 UserId = _userProvider.Id,
-                FileName = $"{_userProvider.Cpf}-{fileName}",
+                FileName = newFileName,
                 Status = VideoStatus.WaitingUpload,
                 UploadUrl = bucketUploadUrl
             };
