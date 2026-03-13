@@ -110,7 +110,7 @@ namespace UnitTests
             Assert.Equal("inserted-id", video.Id);
             Assert.Equal(user.Id, video.UserId);
             Assert.Equal(VideoStatus.WaitingUpload, video.Status);
-            Assert.Equal("upload://newfile.mp4", video.UploadUrl);
+            Assert.Equal("upload://123.456.789-00-newfile.mp4", video.UploadUrl);
         }
 
         [Fact]
