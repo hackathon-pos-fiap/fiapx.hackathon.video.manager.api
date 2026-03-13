@@ -24,7 +24,7 @@ namespace Adapters.Gateways.BucketS3
             var downloadRequest = new GetPreSignedUrlRequest
             {
                 BucketName = BUCKET_NAME,
-                Key = fileName,
+                Key = $"processed/{fileName}",
                 Verb = HttpVerb.GET,
                 Expires = DateTime.UtcNow.AddMinutes(10)
             };
